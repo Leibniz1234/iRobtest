@@ -2,7 +2,7 @@ FROM nvidia/cudagl:11.1.1-base-ubuntu18.04
 
 # Minimal setup
 RUN apt-get update \
- && apt-get install -y locales lsb-release gnupg2 apt-utils
+ && apt-get install -y locales lsb-release gnupg2
 ARG DEBIAN_FRONTEND=noninteractive
 RUN dpkg-reconfigure locales
  
@@ -18,8 +18,9 @@ RUN rosdep init \
 RUN echo "source /opt/ros/melodic/setup.bash" >> ~/.bashrc
 RUN echo 'export LIBGL_ALWAYS_INDIRECT=1' >> ~/.bashrc
 
-RUN apt-get install -y git wget python-rosinstall python-rosinstall-generator python-catkin-tools git \
+RUN apt-get install -y wget python-rosinstall python-rosinstall-generator python-catkin-tools git \
          gcc clang clang-tools cmake python3 libv4l-dev libv4l2rds0 locales aptitude python-networkx\
+         python-pip python-wstool python-scipy python3-vcstool
          python-pip python-wstool python-scipy python3-vcstool mesa-utils libgl1-mesa-glx libcanberra-gtk-module libcanberra-gtk3-module
 
 RUN mkdir -p tiago_dual_public_ws/src
@@ -28,9 +29,6 @@ RUN cd tiago_dual_public_ws
 RUN wget https://raw.githubusercontent.com/pal-robotics/tiago_dual_tutorials/master/tiago_dual_public-melodic.rosinstall
 RUN rosinstall src /opt/ros/melodic tiago_dual_public-melodic.rosinstall
 RUN vcs import tiago_dual_public_ws/src < tiago_dual_public-melodic.rosinstall
-RUN bash -c "cd tiago_dual_public_ws/src/tiago_moveit_config \
-        && git checkout 1.2.3 \
-        && cd ../.."
 
 RUN rosdep update
 RUN rosdep install --from-paths tiago_dual_public_ws/src --ignore-src -y --rosdistro melodic --skip-keys="opencv2 opencv2-nonfree pal_laser_filters speed_limit_node\
